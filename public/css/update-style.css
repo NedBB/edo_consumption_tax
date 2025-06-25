@@ -1,0 +1,153 @@
+tr td{
+    font-size: 13px !important;
+    text-transform: capitalize !important;
+}
+
+th{
+    font-weight: bold !important;
+}
+
+.dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #4f46e5;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .card h3 {
+      margin: 0;
+      font-size: 14px;
+      color: #64748b;
+    }
+    .card p {
+      margin: 5px 0 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .status-active {
+      color: #10b981;
+    }
+    .status-pending {
+      color: #f59e0b;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #e2e8f0;
+      margin: 20px 0;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      border-bottom-color: #4f46e5;
+      color: #4f46e5;
+      font-weight: 600;
+    }
+    .content-area {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .profile-info {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .info-row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      margin-bottom: 15px;
+    }
+    .info-label {
+      color: #64748b;
+      font-weight: 500;
+    }
+    .filings-list {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .filing-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .filing-status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+    .status-filed {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    .status-pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .action-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .btn {
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .btn-primary {
+      background: #4f46e5;
+      color: white;
+      border: none;
+    }
+    .btn-secondary {
+      background: white;
+      color: #4f46e5;
+      border: 1px solid #4f46e5;
+    }
+    @media (max-width: 768px) {
+      .content-area {
+        grid-template-columns: 1fr;
+      }
+      .summary-cards {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
