@@ -30,9 +30,10 @@ class TaxpayerSeeder extends Seeder
         //private $authUrl = 'https://apieirs.blouzatech.ng/api/Authentication/Login';
         $bearerToken = env('API_EIRS_TOKEN');
         $pageNumber = 1;
-        $pageSize = 50;
+        $pageSize = 200;
         $totalProcessed = 0;
         $usersCreated = 0;
+        $totalUpdated = 0;
 
         // do {
         //     $response = Http::withHeaders([
@@ -97,83 +98,84 @@ class TaxpayerSeeder extends Seeder
 
         // Log::info("Completed seeding. Total records: {$totalProcessed}");
 
-        do {
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $bearerToken,
-            'Accept' => 'application/json'
-        ])->get($apiUrl, [
-            'pageNumber' => $pageNumber,
-            'pageSize' => $pageSize
-        ]);
 
-        if ($response->successful()) {
-            $data = $response->json();
-            $records = $data['Result'] ?? [];
+do {
+    $response = Http::withHeaders([
+        'Authorization' => 'Bearer ' . $bearerToken,
+        'Accept' => 'application/json'
+    ])->get($apiUrl, [
+        'pageNumber' => $pageNumber,
+        'pageSize' => $pageSize
+    ]);
 
-            if (empty($records)) {
-                break;
+    if ($response->successful()) {
+        $data = $response->json();
+        $records = $data['Result'] ?? [];
+
+        if (empty($records)) {
+            break;
+        }
+
+        foreach ($records as $record) {
+            // Generate email if not provided
+            $email = $record['EmailAddress'] ?? null;
+            if (empty($email)) {
+                $rin = $record['TaxPayerRIN'] ?? Str::random(8);
+                $email = "taxpayer_{$rin}@example.com";
             }
 
-            foreach ($records as $record) {
-                // Generate email if not provided
-                $email = $record['EmailAddress'] ?? null;
-                if (empty($email)) {
-                    $rin = $record['TaxPayerRIN'] ?? Str::random(8);
-                    $email = "taxpayer_{$rin}@example.com";
-                }
+            // Create or get user
+            $userId = DB::table('users')->where('email', $email)->value('id');
 
-                // Create or get user
-                $userId = DB::table('users')->where('email', $email)->value('id');
-
-                if (!$userId) {
-                    $userId = DB::table('users')->insertGetId([
-                        'name' => $record['TaxPayerName'] ?? 'Tax Payer',
-                        'email' => $email,
-                        'password' => Hash::make(Str::random(12)),
-                        'type' => 'user',
-                        'created_at' => now(),
-                        'updated_at' => now()
-                    ]);
-                    $usersCreated++;
-                }
-
-                // Create taxpayer record with user_id
-                DB::table('taxpayers')->insert([
-                    'user_id' => $userId,
-                    'taxpayer_id' => $record['TaxPayerID'] ?? null,
-                    "category_id" => 1,
-                    'typeid' => $record['TaxPayerTypeID'] ?? null,
-                    'typename' => $record['TaxPayerTypeName'] ?? null,
-                    'name' => $record['TaxPayerName'] ?? null,
-                    'rin' => $record['TaxPayerRIN'] ?? null,
-                    'phone' => $record['MobileNumber'] ?? null,
-                    'address' => $record['ContactAddress'] ?? null,
+            if (!$userId) {
+                $userId = DB::table('users')->insertGetId([
+                    'name' => $record['TaxPayerName'] ?? 'Tax Payer',
                     'email' => $email,
-                    'tin' => $record['TIN'] ?? null,
-                    'tax_office' => $record['TaxOffice'] ?? null,
+                    'password' => Hash::make(Str::random(12)),
+                    'type' => 'user',
                     'created_at' => now(),
                     'updated_at' => now()
                 ]);
-
-                $totalProcessed++;
+                $usersCreated++;
             }
 
-            $pageNumber++;
-            Log::info("Processed batch. Total taxpayers: {$totalProcessed}, Users created: {$usersCreated}");
-        }
-        else {
-            if ($response->status() === 401) {
-                continue;
+            // Check if taxpayer exists (using taxpayer_id or another unique field)
+            $taxpayerId = $record['TaxPayerID'] ?? null;
+            $existingTaxpayer = DB::table('taxpayers')
+                                ->where('taxpayer_id', $taxpayerId)
+                                ->first();
+
+            if ($existingTaxpayer) {
+                // Update only the user_id for existing taxpayer
+                DB::table('taxpayers')
+                    ->where('taxpayer_id', $taxpayerId)
+                    ->update(['user_id' => $userId]);
+
+                $totalUpdated++;
+            } else {
+                // Optional: Insert new taxpayer if not found
+                // DB::table('taxpayers')->insert([...]);
+                // $totalProcessed++;
             }
-            Log::error("API request failed: " . $response->status());
-            break;
         }
+
+        $pageNumber++;
+        Log::info("Processed batch. Total updated: {$totalUpdated}, Users created: {$usersCreated}");
+    }
+    else {
+        if ($response->status() === 401) {
+            continue;
+        }
+        Log::error("API request failed: " . $response->status());
+        break;
+    }
 
         // Rate limiting
         sleep(1);
 
     } while (true);
 
-    Log::info("Completed seeding. Total taxpayers: {$totalProcessed}, Users created: {$usersCreated}");
+    Log::info("Completed. Total taxpayers updated: {$totalUpdated}, Users created: {$usersCreated}");
+
     }
 }
