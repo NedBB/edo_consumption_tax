@@ -16,18 +16,18 @@ class ProfileSeeder extends Seeder
      public function run(): void
     {
         // $url = 'https://apieirs.blouzatech.ng/SupplierData/CTC_Guest_Houses_TaxPayer';
-        //$apiUrl ='https://apieirs.blouzatech.ng/SupplierData/CTC_Bars_Profile';
+        $apiUrl ='https://apieirs.blouzatech.ng/SupplierData/CTC_Bars_Profile';
        //$apiUrl ='https://apieirs.blouzatech.ng/SupplierData/CTC_Hotels_Profile';
         //$apiUrl = 'https://apieirs.blouzatech.ng/SupplierData/CTC_Guest_Houses_Profile';
         //$apiUrl = 'https://apieirs.blouzatech.ng/SupplierData/CTC_Motels_Profile';
          //$apiUrl = 'https://apieirs.blouzatech.ng/SupplierData/CTC_Event_Centers_Profile';
          //$apiUrl = 'https://apieirs.blouzatech.ng/SupplierData/CTC_Restaurants_Profile';
-         $apiUrl = 'https://apieirs.blouzatech.ng/SupplierData/CTC_Online_Drink_Trading_Profile';
+         //$apiUrl = 'https://apieirs.blouzatech.ng/SupplierData/CTC_Online_Drink_Trading_Profile';
 
 
         $bearerToken = env('API_EIRS_TOKEN');
         $pageNumber = 1;
-        $pageSize = 200;
+        $pageSize = 50;
         $totalProcessed = 0;
 
         do {
@@ -51,7 +51,7 @@ class ProfileSeeder extends Seeder
                 foreach ($records as $record) {
                     $batch[] = [
                         'profile_id' => $record['ProfileID'] ?? null,
-                        "category_id" => 7,
+                        "category_id" => 1,
                         'asset_id' => $record['AssetID'] ?? null,
                         'asset_type' => $record['AssetTypeName'] ?? null,
                         'asset_rin' => $record['AssetRIN'] ?? 'not added',

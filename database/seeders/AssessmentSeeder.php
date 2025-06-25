@@ -15,8 +15,8 @@ class AssessmentSeeder extends Seeder
      */
     public function run(): void
     {
-        //$apiUrl ='https://apieirs.blouzatech.ng/SupplierData/CTC_Bars_Assessment';
-       $apiUrl ='https://apieirs.blouzatech.ng/SupplierData/CTC_Hotels_Assessment';
+        $apiUrl ='https://apieirs.blouzatech.ng/SupplierData/CTC_Bars_Assessment';
+       //$apiUrl ='https://apieirs.blouzatech.ng/SupplierData/CTC_Hotels_Assessment';
         //$apiUrl = 'https://apieirs.blouzatech.ng/SupplierData/CTC_Guest_Houses_Assessment';
         //$apiUrl = 'https://apieirs.blouzatech.ng/SupplierData/CTC_Motels_Assessment';
          //$apiUrl = 'https://apieirs.blouzatech.ng/SupplierData/CTC_Event_Centers_Assessment';
@@ -26,7 +26,7 @@ class AssessmentSeeder extends Seeder
 
         $bearerToken = env('API_EIRS_TOKEN');
         $pageNumber = 1;
-        $pageSize = 200;
+        $pageSize = 50;
         $totalProcessed = 0;
 
         do {
@@ -53,7 +53,7 @@ class AssessmentSeeder extends Seeder
                         'taxpayer_id' => $record['TaxPayerID'] ?? null,
                         'profile_id' => $record['ProfileID'] ?? null,
                         'asset_id' => $record['AssetID'] ?? null,
-                        "category_id" => 2,
+                        "category_id" => 1,
                         'assessment_ref_no' => $record['AssessmentRefNo'] ?? null,
                         'assessment_date' => $record['AssessmentDate'] ?? null,
                         'assessment_amount' => $record['AssessmentAmount'] ?? 0.00,
