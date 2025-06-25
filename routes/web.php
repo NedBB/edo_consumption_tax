@@ -27,6 +27,8 @@ Route::view('profile', 'profile')
     Volt::route('/dashboard/tax-payer', 'dashboard-user')->name('user.dashboard')->middleware(['auth']);
 
     Volt::route('/add/earning', 'add-earning')->name('add.earning')->middleware(['auth']);
+    Volt::route('/assessment', 'assessment')->name('assessment')->middleware(['auth']);
+
 
     // Route::get('/taxpayer', function () {
     //     return view('livewire.taxpayer');

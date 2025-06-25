@@ -98,9 +98,9 @@
     </li>
 
     <li class="menu-item">
-        <a href="{{route('generate-tax')}}" class="menu-link">
+        <a href="{{route('assessment')}}" class="menu-link">
         <i class="menu-icon tf-icons ti ti-layout-kanban"></i>
-        <div data-i18n="Generate Tax Amount">Generate Tax Amount</div>
+        <div data-i18n="Tax Assessment">Tax Assessment</div>
         </a>
     </li>
 
