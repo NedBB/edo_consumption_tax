@@ -28,6 +28,7 @@ Route::view('profile', 'profile')
 
     Volt::route('/add/earning', 'add-earning')->name('add.earning')->middleware(['auth']);
     Volt::route('/assessment', 'assessment')->name('assessment')->middleware(['auth']);
+    Volt::route('/taxpayer/validation', 'taxpayer-validation')->name('taxpayer-validation')->middleware(['guest']);
 
 
     // Route::get('/taxpayer', function () {

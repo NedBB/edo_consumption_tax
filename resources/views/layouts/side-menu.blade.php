@@ -121,17 +121,17 @@
         </a>
     </li>
 
-    <li class="menu-item">
+    {{-- <li class="menu-item">
         <a href="{{route("profile")}}" class="menu-link">
         <i class="menu-icon tf-icons ti ti-smart-home"></i>
         <div data-i18n="Profile">Profile</div>
         </a>
-    </li>
+    </li> --}}
 
     <li class="menu-item">
-        <a href="{{route("add.earning")}}" class="menu-link">
-        <i class="menu-icon tf-icons ti ti-smart-home"></i>
-        <div data-i18n="Add Earnings">Add Earnings</div>
+        <a href="{{route('assessment')}}" class="menu-link">
+        <i class="menu-icon tf-icons ti ti-layout-kanban"></i>
+        <div data-i18n="Tax Assessment">Tax Assessment</div>
         </a>
     </li>
 

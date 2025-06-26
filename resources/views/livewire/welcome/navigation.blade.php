@@ -1,4 +1,4 @@
-<nav class="-mx-3 flex flex-1 justify-end">
+<nav class="-mx-3 flex flex-1 justify-end " style="font-size: 18px">
     @auth
         <a
             href="{{ url('/dashboard') }}"
@@ -11,7 +11,14 @@
             href="{{ route('login') }}"
             class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
         >
-            Log in
+            Others
+        </a>
+
+        <a
+            href="{{ route('taxpayer-validation') }}"
+            class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+        >
+            Tax Payers
         </a>
 
         {{-- @if (Route::has('register'))

@@ -47,6 +47,10 @@ class User extends Authenticatable
         ];
     }
 
+    public function taxpayer(){
+        return $this->belongsTo(Taxpayer::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->type === 'admin';

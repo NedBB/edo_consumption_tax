@@ -4,6 +4,7 @@ use Livewire\Volt\Component;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\View\View;
+use App\Services\TaxpayerService;
 use Carbon\Carbon;
 
 new class extends Component {
@@ -12,8 +13,10 @@ new class extends Component {
     public bool $isSubmitting = false;
     public ?array $apiResponse = null;
 
-    public function mount(): void
+    public function mount(TaxpayerService $taxpayerService)
     {
+         $this->user = auth()->user();
+        $records = $taxpayerService->getTaxpayerAssessmentByUserID($this->user->id);
         $this->resetForm();
     }
 
@@ -161,6 +164,11 @@ new class extends Component {
                         <input wire:model="formData.TaxYear" type="number" min="2000" max="{{ now()->year + 1 }}" class="form-control">
                         @error('formData.TaxYear') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                     </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Base Amount *</label>
+                        <input wire:model="formData.Baseamount" type="number" min="2000" max="{{ now()->year + 1 }}" class="form-control">
+                        @error('formData.Baseamount') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                    </div>
 
                     <div class="col-12 mb-3">
                         <label class="form-label">Notes</label>
@@ -169,7 +177,7 @@ new class extends Component {
                 </div>
 
                 <!-- Assessment Items Section -->
-                <div class="border-top pt-4 mb-4">
+                {{-- <div class="border-top pt-4 mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4 class="mb-0">Assessment Items</h4>
                         <button type="button" wire:click="addAssessmentItem" class="btn btn-sm btn-outline-primary">
@@ -207,7 +215,7 @@ new class extends Component {
                             </div>
                         </div>
                     @endforeach
-                </div>
+                </div> --}}
 
                 <!-- Form Actions -->
                 <div class="border-top pt-4">

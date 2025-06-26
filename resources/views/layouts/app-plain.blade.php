@@ -67,7 +67,7 @@
     <link rel="stylesheet" href="{{asset('libs/select2/select2.css')}}" />
 
     <link rel="stylesheet" href="{{asset('css/update-style.css?v=').time()}}" />
-    @vite('resources/css/app.css', 'resources/js/app.js')
+    {{-- @vite('resources/css/app.css', 'resources/js/app.js') --}}
     @livewireStyles
   </head>
 
