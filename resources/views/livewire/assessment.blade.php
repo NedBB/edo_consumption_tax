@@ -112,6 +112,8 @@ new class extends Component {
             ]
         ];
 
+
+
         try {
             $bearerToken = env('API_EIRS_TOKEN');
 
@@ -121,6 +123,8 @@ new class extends Component {
             ])->post('https://apieirs.blouzatech.ng/RevenueData/Assessment/Insert', $assessmentData);
 
             $data = $response->json();
+
+            dd($data);
 
             if ($response->successful() && $data['Success']) {
 
