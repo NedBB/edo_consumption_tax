@@ -122,11 +122,13 @@ new class extends Component {
                 'Accept' => 'application/json'
             ])->post('https://apieirs.blouzatech.ng/RevenueData/Assessment/Insert', $assessmentData);
 
+            if (!$response->successful()) {
+                throw new \Exception('API request failed with status: ' . $response->status());
+            }
+
             $data = $response->json();
 
-            dd($data);
-
-            if ($response->successful() && $data['Success']) {
+            if ($data['Success'] === true) {
 
                 $datax = [
                     "taxpayer_id" => $this->taxpayer->taxpayer_id,
@@ -144,23 +146,29 @@ new class extends Component {
 
                 $insertRecord = $assessService->storeAssessment($datax);
 
-                if($insertRecord){
-                    session()->flash('success', 'Assessment data submitted successfully!');
-                    $this->resetForm();
-
-                } else {
-                    // Log unexpected response structure
-                    \Log::warning('API response missing "Result" key', ['response' => $data]);
-                    $this->reference_no = null; // or set a default value
+                if (!$insertRecord) {
+                    throw new \Exception('Failed to save assessment locally');
                 }
+
+                session()->flash('success', $data['Message'] ?? 'Assessment submitted successfully');
+                $this->resetForm();
+
             }
             else {
-                session()->flash('error', 'Error occurred while submitting data!');
+                $errorMessage = $data['Message'] ?? 'Assessment failed without explanation';
+                \Log::error('API assessment failed', ['response' => $data]);
+                throw new \Exception($errorMessage);
 
             }
-        } catch (\Exception $e) {
-            $this->apiResponse = ['error' => $e->getMessage()];
+        }
+        catch (\Exception $e) {
+            \Log::error('Assessment error: ' . $e->getMessage(), [
+                'exception' => $e,
+                'assessmentData' => $assessmentData ?? null
+            ]);
+
             session()->flash('error', $e->getMessage());
+            $this->apiResponse = ['error' => $e->getMessage()];
 
         } finally {
             $this->isSubmitting = false;
