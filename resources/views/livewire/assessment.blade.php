@@ -156,6 +156,8 @@ new class extends Component {
             }
         } catch (\Exception $e) {
             $this->apiResponse = ['error' => $e->getMessage()];
+            session()->flash('error', $e->getMessage());
+
         } finally {
             $this->isSubmitting = false;
         }
