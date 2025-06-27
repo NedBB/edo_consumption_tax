@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\View\View;
 use App\Services\TaxpayerService;
+use App\Services\AssetService;
+use App\Services\AssessmentRuleService;
+use App\Services\AssessmentService;
 use Carbon\Carbon;
 
 new class extends Component {
@@ -12,32 +15,35 @@ new class extends Component {
     public array $formData = [];
     public bool $isSubmitting = false;
     public ?array $apiResponse = null;
+    public $taxpayer;
+    public $taxpayer_id;
+    public $type_id;
+    public $asset_id;
+    public $asset_type_id;
+    public $profile_id;
+    public $notes;
+    public $reference_no;
+    public $tax_amount;
+    public $tax_year;
+    public $assessment_rule_id;
+    public $records;
 
-    public function mount(TaxpayerService $taxpayerService)
+    protected $listeners = ['selectionChanged' => 'changeAsset'];
+
+    public function mount(AssetService $assetService)
     {
-         $this->user = auth()->user();
-        $records = $taxpayerService->getTaxpayerAssessmentByUserID($this->user->id);
+        $this->taxpayer = auth()->user();
+        $this->records = $assetService->getAssetByTaxpayerId($this->taxpayer->taxpayer_id);
         $this->resetForm();
     }
 
     public function resetForm(): void
     {
-        $this->formData = [
-            'TaxPayerTypeID' => 0,
-            'TaxPayerID' => 0,
-            'Notes' => '',
-            'AssetTypeID' => 0,
-            'AssetID' => 0,
-            'ProfileID' => 0,
-            'AssessmentRuleID' => 0,
-            'TaxYear' => Carbon::now()->year,
-            'LstAssessmentItem' => [
-                [
-                    'AssessmentItemID' => 0,
-                    'TaxBaseAmount' => 0
-                ]
-            ]
-        ];
+        $this->notes = "";
+        $this->assessment_rule_id = 0;
+        $this->tax_amount = 0;
+        $this->tax_year = 0;
+
     }
 
     public function addAssessmentItem(): void
@@ -56,35 +62,97 @@ new class extends Component {
         }
     }
 
-    public function submitToApi(): void
+    public function changeAsset($value, AssetService $assetService,
+     AssessmentRuleService $assessmentRule)
+    {
+
+        if ($value) {
+
+            $assetObject = $this->records->firstWhere('asset_id', $value);
+            $this->taxpayer_id = $this->taxpayer->taxpayer_id;
+            $this->type_id = $this->taxpayer->typeid;
+            $this->asset_id = $value;
+            $this->asset_type_id = $assetObject->asset_type_id;
+            $profile = $assetService->getProfileByAssetId($value);
+            $this->profile_id = $profile->profile_id;
+            $this->assessment_rule_id = $assessmentRule->getAssessmentRuleId($profile->profile_id,$this->asset_id,$this->taxpayer_id);
+
+        } else {
+
+        }
+    }
+
+
+    public function submitToApi(AssessmentService $assessService): void
     {
         $this->validate([
-            'formData.TaxPayerTypeID' => 'required|integer|min:1',
-            'formData.TaxPayerID' => 'required|integer|min:1',
-            'formData.AssetTypeID' => 'required|integer|min:1',
-            'formData.AssetID' => 'required|integer|min:1',
-            'formData.ProfileID' => 'required|integer|min:1',
-            'formData.AssessmentRuleID' => 'required|integer|min:1',
-            'formData.TaxYear' => 'required|integer|digits:4|min:2000|max:' . (Carbon::now()->year + 1),
-            'formData.LstAssessmentItem.*.AssessmentItemID' => 'required|integer|min:1',
-            'formData.LstAssessmentItem.*.TaxBaseAmount' => 'required|numeric|min:0',
+            'assessment_rule_id' => 'required|integer',
+            'tax_year' => 'required|integer|digits:4',
+            'tax_amount' => 'required|numeric',
+            "notes" => 'required'
         ]);
 
         $this->isSubmitting = true;
         $this->apiResponse = null;
 
+        $assessmentData = [
+            "TaxPayerTypeID" => $this->taxpayer->taxpayer_id,
+            "TaxPayerID" => $this->taxpayer->typeid,
+            "Notes" => $this->notes,
+            "AssetTypeID" => $this->asset_type_id,
+            "AssetID" => $this->asset_id,
+            "ProfileID" => $this->profile_id,
+            "AssessmentRuleID" => $this->assessment_rule_id,
+            "TaxYear" => $this->tax_year,
+            "LstAssessmentItem" => [
+                [
+                    "AssessmentItemID" => 0,
+                    "TaxBaseAmount" => $this->tax_amount
+                ]
+            ]
+        ];
+
         try {
+            $bearerToken = env('API_EIRS_TOKEN');
+
             $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . config('services.api.token'),
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json'
-            ])->timeout(30)->post(config('services.api.assessment_endpoint'), $this->formData);
+                'Authorization' => 'Bearer ' . $bearerToken,
+                'Accept' => 'application/json'
+            ])->post('https://apieirs.blouzatech.ng/RevenueData/Assessment/Insert', $assessmentData);
 
-            $this->apiResponse = $response->json();
+            $data = $response->json();
 
-            if ($response->successful()) {
-                session()->flash('success', 'Assessment data submitted successfully!');
-                $this->resetForm();
+            if ($response->successful() && $data['Success']) {
+
+                $datax = [
+                    "taxpayer_id" => $this->taxpayer->taxpayer_id,
+                    "taxpayer_type_id" => $this->taxpayer->typeid,
+                    "asset_type_id" => $this->asset_type_id,
+                    "asset_id" => $this->asset_id,
+                    "profile_id" => $this->profile_id,
+                    "assessment_rule_id" => $this->assessment_rule_id,
+                    "tax_year" => $this->tax_year,
+                    "tax_amount" => $this->tax_amount,
+                    "notes" => $this->notes,
+                    "reference_code" => $data['Result'],
+                    "status" => "pending"
+                ];
+
+                $insertRecord = $assessService->storeAssessment($datax);
+
+                if($insertRecord){
+                    session()->flash('success', 'Assessment data submitted successfully!');
+                    $this->resetForm();
+
+                } else {
+                    // Log unexpected response structure
+                    \Log::warning('API response missing "Result" key', ['response' => $data]);
+                    $this->reference_no = null; // or set a default value
+                }
+            }
+            else {
+                session()->flash('error', 'Error occurred while submitting data!');
+
             }
         } catch (\Exception $e) {
             $this->apiResponse = ['error' => $e->getMessage()];
@@ -95,7 +163,6 @@ new class extends Component {
 
      public function render():View
     {
-
         return view('livewire.assessment')
                 ->layout('layouts.app-view');
     }
@@ -104,7 +171,7 @@ new class extends Component {
 <div class="container mt-4">
     <div class="card">
         <div class="card-header text-white">
-            <h2 class="mb-0">Tax Assessment Submission</h2>
+            <h2 class="mb-0 font-weight-bold" style="font-size: 20px" >Tax Assessment Submission</h2>
         </div>
 
         <div class="card-body">
@@ -123,56 +190,34 @@ new class extends Component {
             <form wire:submit.prevent="submitToApi">
                 <!-- Main Fields -->
                 <div class="row mb-4">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Tax Payer Type ID *</label>
-                        <input wire:model="formData.TaxPayerTypeID" type="number" min="1" class="form-control">
-                        @error('formData.TaxPayerTypeID') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                    </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Tax Payer ID *</label>
-                        <input wire:model="formData.TaxPayerID" type="number" min="1" class="form-control">
-                        @error('formData.TaxPayerID') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Select Asset for Assessment</label>
+                        <select wire:model="asset" @change="$dispatch('selectionChanged',{'value': $event.target.value})" class="form-select" id="basic-default-country" required>
+                            <option value="">Select Asset</option>
+                            @foreach ($records as $list)
+                                <option value="{{$list->asset_id}}">{{$list->business_name}}</option>
+                            @endforeach
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Asset Type ID *</label>
-                        <input wire:model="formData.AssetTypeID" type="number" min="1" class="form-control">
-                        @error('formData.AssetTypeID') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                          </select>
+                        @error('asset')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Asset ID *</label>
-                        <input wire:model="formData.AssetID" type="number" min="1" class="form-control">
-                        @error('formData.AssetID') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Profile ID *</label>
-                        <input wire:model="formData.ProfileID" type="number" min="1" class="form-control">
-                        @error('formData.ProfileID') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Assessment Rule ID *</label>
-                        <input wire:model="formData.AssessmentRuleID" type="number" min="1" class="form-control">
-                        @error('formData.AssessmentRuleID') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                    </div>
-
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Tax Year *</label>
-                        <input wire:model="formData.TaxYear" type="number" min="2000" max="{{ now()->year + 1 }}" class="form-control">
-                        @error('formData.TaxYear') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                        <input wire:model="tax_year" type="number" min="2000" max="{{ now()->year + 1 }}" class="form-control">
+                        @error('tax_year') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Base Amount *</label>
-                        <input wire:model="formData.Baseamount" type="number" min="2000" max="{{ now()->year + 1 }}" class="form-control">
-                        @error('formData.Baseamount') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                        <input wire:model="tax_amount" type="number"  class="form-control">
+                        @error('tax_amount') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                     </div>
 
                     <div class="col-12 mb-3">
                         <label class="form-label">Notes</label>
-                        <textarea wire:model="formData.Notes" rows="2" class="form-control"></textarea>
+                        <textarea wire:model="notes" rows="2" class="form-control"></textarea>
                     </div>
                 </div>
 

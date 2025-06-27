@@ -178,7 +178,7 @@ new class extends Component {
                         <small class="d-block mb-1 text-muted">Sales Overview</small>
                         <p class="card-text text-success">+18.2%</p>
                       </div>
-                      <h4 class="card-title mb-1">$42.5k</h4>
+                      <h4 class="card-title mb-1">&#x20A6;42.5k</h4>
                     </div>
                     <div class="card-body">
                       <div class="row">
@@ -277,7 +277,7 @@ new class extends Component {
                       <div class="row">
                         <div class="col-12 col-md-4 d-flex flex-column align-self-end">
                           <div class="d-flex gap-2 align-items-center mb-2 pb-1 flex-wrap">
-                            <h1 class="mb-0">$468</h1>
+                            <h1 class="mb-0">&#x20A6;468</h1>
                             <div class="badge rounded bg-label-success">+4.2%</div>
                           </div>
                           <small>You informed of this week compared to last week</small>
@@ -295,7 +295,7 @@ new class extends Component {
                               </div>
                               <h6 class="mb-0">Earnings</h6>
                             </div>
-                            <h4 class="my-2 pt-1">$545.69</h4>
+                            <h4 class="my-2 pt-1">&#x20A6;545.69</h4>
                             <div class="progress w-75" style="height: 4px">
                               <div
                                 class="progress-bar"
@@ -311,7 +311,7 @@ new class extends Component {
                               <div class="badge rounded bg-label-info p-1"><i class="ti ti-chart-pie-2 ti-sm"></i></div>
                               <h6 class="mb-0">Profit</h6>
                             </div>
-                            <h4 class="my-2 pt-1">$256.34</h4>
+                            <h4 class="my-2 pt-1">&#x20A6;256.34</h4>
                             <div class="progress w-75" style="height: 4px">
                               <div
                                 class="progress-bar bg-info"
@@ -329,7 +329,7 @@ new class extends Component {
                               </div>
                               <h6 class="mb-0">Expense</h6>
                             </div>
-                            <h4 class="my-2 pt-1">$74.19</h4>
+                            <h4 class="my-2 pt-1">&#x20A6;74.19</h4>
                             <div class="progress w-75" style="height: 4px">
                               <div
                                 class="progress-bar bg-danger"
@@ -445,7 +445,7 @@ new class extends Component {
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div class="me-2">
                               <div class="d-flex align-items-center">
-                                <h6 class="mb-0 me-1">$8,567k</h6>
+                                <h6 class="mb-0 me-1">&#x20A6;8,567k</h6>
                               </div>
                               <small class="text-muted">United states</small>
                             </div>
@@ -462,7 +462,7 @@ new class extends Component {
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div class="me-2">
                               <div class="d-flex align-items-center">
-                                <h6 class="mb-0 me-1">$2,415k</h6>
+                                <h6 class="mb-0 me-1">&#x20A6;2,415k</h6>
                               </div>
                               <small class="text-muted">Brazil</small>
                             </div>
@@ -479,7 +479,7 @@ new class extends Component {
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div class="me-2">
                               <div class="d-flex align-items-center">
-                                <h6 class="mb-0 me-1">$865k</h6>
+                                <h6 class="mb-0 me-1">&#x20A6;865k</h6>
                               </div>
                               <small class="text-muted">India</small>
                             </div>
@@ -496,7 +496,7 @@ new class extends Component {
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div class="me-2">
                               <div class="d-flex align-items-center">
-                                <h6 class="mb-0 me-1">$745k</h6>
+                                <h6 class="mb-0 me-1">&#x20A6;745k</h6>
                               </div>
                               <small class="text-muted">Australia</small>
                             </div>
@@ -513,7 +513,7 @@ new class extends Component {
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div class="me-2">
                               <div class="d-flex align-items-center">
-                                <h6 class="mb-0 me-1">$45</h6>
+                                <h6 class="mb-0 me-1">&#x20A6;45</h6>
                               </div>
                               <small class="text-muted">France</small>
                             </div>
@@ -530,7 +530,7 @@ new class extends Component {
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div class="me-2">
                               <div class="d-flex align-items-center">
-                                <h6 class="mb-0 me-1">$12k</h6>
+                                <h6 class="mb-0 me-1">&#x20A6;12k</h6>
                               </div>
                               <small class="text-muted">China</small>
                             </div>
@@ -585,7 +585,7 @@ new class extends Component {
                             <h6 class="mb-0">Total Sales</h6>
                             <small class="text-muted">Refund</small>
                           </div>
-                          <p class="mb-0 text-success">+$98</p>
+                          <p class="mb-0 text-success">&#x20A6;98</p>
                         </div>
                       </div>
                       <div class="d-flex align-items-start">
@@ -597,7 +597,7 @@ new class extends Component {
                             <h6 class="mb-0">Total Revenue</h6>
                             <small class="text-muted">Client Payment</small>
                           </div>
-                          <p class="mb-0 text-success">+$126</p>
+                          <p class="mb-0 text-success">&#x20A6;126</p>
                         </div>
                       </div>
                     </div>

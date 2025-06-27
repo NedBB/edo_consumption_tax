@@ -2,25 +2,27 @@
 
 use Livewire\Volt\Component;
 use Illuminate\Contracts\View\View;
-use App\Services\TaxpayerService;
+use App\Services\AssetService;
 use Livewire\Attributes\Computed;
 use function Livewire\Volt\{computed};
 
 new class extends Component {
     //
     public $details;
-    public $user;
-    public function boot(TaxpayerService $taxpayerService) {
-       $this->user = auth()->user();
-      $records = $taxpayerService->getTaxpayerDetailByUserID($this->user->id);
-      $this->details = $records[0];
+    public $assets;
+    public function boot(AssetService $assetService) {
+        $this->details = auth()->user();
+        $this->assets = $assetService->getAssetByTaxpayerId($this->details->taxpayer_id);
+    //   $records = $taxpayerService->getTaxpayerDetailByUserID($this->user->id);
+    //   $this->details = $records[0];
     }
 
 
     public function render():View
     {
 
-        //$details = $this->taxpayerService;
+        //$details = $this->user;
+
 
         return view('livewire.dashboard-user')
                 ->layout('layouts.app-view');
@@ -40,7 +42,7 @@ new class extends Component {
         </div>
         <div class="card">
             <h3>Balance Due</h3>
-            <p>$0.00</p>
+            <p>&#x20A6; 0.00</p>
         </div>
         <div class="card">
             <h3>Alerts</h3>
@@ -62,7 +64,7 @@ new class extends Component {
                           Profile
                         </button>
                       </li>
-                      {{-- <li class="nav-item">
+                      <li class="nav-item">
                         <button
                           type="button"
                           class="nav-link"
@@ -71,9 +73,9 @@ new class extends Component {
                           data-bs-target="#navs-top-profile"
                           aria-controls="navs-top-profile"
                           aria-selected="false">
-                          Profile
+                          Assets
                         </button>
-                      </li> --}}
+                      </li>
                       {{-- <li class="nav-item">
                         <button
                           type="button"
@@ -100,7 +102,7 @@ new class extends Component {
                             </div>
                             <div class="info-row">
                             <span class="info-label">Email:</span>
-                            <span>{{$user->email}}</span>
+                            <span>{{$details->email}}</span>
                             </div>
                             <div class="info-row">
                             <span class="info-label">Phone:</span>
@@ -126,15 +128,35 @@ new class extends Component {
                     </div>
                       </div>
                       <div class="tab-pane fade" id="navs-top-profile" role="tabpanel">
-                        <p>
-                          Donut dragée jelly pie halvah. Danish gingerbread bonbon cookie wafer candy oat cake ice
-                          cream. Gummies halvah tootsie roll muffin biscuit icing dessert gingerbread. Pastry ice cream
-                          cheesecake fruitcake.
-                        </p>
-                        <p class="mb-0">
-                          Jelly-o jelly beans icing pastry cake cake lemon drops. Muffin muffin pie tiramisu halvah
-                          cotton candy liquorice caramels.
-                        </p>
+                         <div class="table-responsive text-nowrap">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Contact</th>
+                                        <th>Business Name</th>
+                                        <th>Business RIN</th>
+                                        <th>Location</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-border-bottom-0">
+                                    @forelse ($assets as $list)
+                                        <tr>
+                                            <td>{{$list->asset_id}}</td>
+                                            <td>{{$list->contact_name}}</td>
+                                            <td>{{$list->business_name}}</td>
+                                            <td>{{$list->business_rin}}</td>
+                                            <td>{{$list->business_address}}</td>
+                                            <td>{{$list->business_type_name}}</td>
+                                        </tr>
+                                    @empty
+                                        <tr><td colspan="5" class="text-danger">No record at this time</td></tr>
+                                    @endforelse
+
+                                </tbody>
+                            </table>
+                        </div>
                       </div>
                       <div class="tab-pane fade" id="navs-top-messages" role="tabpanel">
                         <p>

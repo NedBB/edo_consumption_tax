@@ -98,9 +98,9 @@
     </li>
 
     <li class="menu-item">
-        <a href="{{route('assessment')}}" class="menu-link">
+        <a href="{{route('get-assessment')}}" class="menu-link">
         <i class="menu-icon tf-icons ti ti-layout-kanban"></i>
-        <div data-i18n="Tax Assessment">Tax Assessment</div>
+        <div data-i18n="List Assessment">List Assessment</div>
         </a>
     </li>
 
@@ -131,9 +131,17 @@
     <li class="menu-item">
         <a href="{{route('assessment')}}" class="menu-link">
         <i class="menu-icon tf-icons ti ti-layout-kanban"></i>
-        <div data-i18n="Tax Assessment">Tax Assessment</div>
+        <div data-i18n="Tax Assessment">Add Assessment</div>
         </a>
     </li>
+    <li class="menu-item">
+        <a href="{{route('view-assessment')}}" class="menu-link">
+        <i class="menu-icon tf-icons ti ti-layout-kanban"></i>
+        <div data-i18n="List Assessments">List Assessments</div>
+        </a>
+    </li>
+
+
 
    @endif
 

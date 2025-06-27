@@ -65,9 +65,11 @@
     <link rel="stylesheet" href="{{asset('libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css')}}" />
     <link rel="stylesheet" href="{{asset('css/demo.css')}}" />
     <link rel="stylesheet" href="{{asset('libs/select2/select2.css')}}" />
+    <link rel="stylesheet" href="{{asset('assets/vendor/css/pages/page-auth.css')}}" />
 
     <link rel="stylesheet" href="{{asset('css/update-style.css?v=').time()}}" />
     {{-- @vite('resources/css/app.css', 'resources/js/app.js') --}}
+
     @livewireStyles
   </head>
 

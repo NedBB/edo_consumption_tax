@@ -4,6 +4,8 @@ use Livewire\Volt\Component;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
 use App\Services\TaxpayerService;
+use Illuminate\Support\Facades\Session;
+
 use App\Models\User;
 
 new class extends Component {
@@ -38,6 +40,13 @@ new class extends Component {
                 // In a real app, this would be an API call or database check
             $this->taxpayerName = $record->name;
             $this->taxpayerRecord = $record->user;
+
+            //  $this->session()->put([
+            //     'taxpayerName' => $this->record->name,
+            //     'taxpayId' => $this->record->taxpayer_id,
+            //     'user_id' => $this->record->user->id
+            // ]);
+
             $this->showConfirmation = true;
             $this->dispatch('show-modal');
 

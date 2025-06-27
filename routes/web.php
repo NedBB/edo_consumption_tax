@@ -2,17 +2,19 @@
 
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
+use App\Livewire\TaxpayerLogin;
 
+    Route::view('/', 'welcome');
 
-Route::view('/', 'welcome');
+    // Route::view('dashboard', 'dashboard')
+    //     ->middleware(['auth', 'verified'])
+   //     ->name('dashboard');
 
-// Route::view('dashboard', 'dashboard')
-//     ->middleware(['auth', 'verified'])
-//     ->name('dashboard');
+    Route::middleware('guest:taxpayer')->group(function () {
+        Volt::route('/taxpayer/login', 'taxpayerlogin')->name('taxpayer.login');
+    });
 
-Route::view('profile', 'profile')
-    ->middleware(['auth'])
-    ->name('profile');
+    Route::view('profile', 'profile')->middleware(['auth'])->name('profile');
 
     Volt::route('/bars', 'bars')->name('bars')->middleware(['auth']);
     Volt::route('/hotels', 'hotels')->name('hotels')->middleware(['auth']);
@@ -24,11 +26,18 @@ Route::view('profile', 'profile')
     Volt::route('/generate/tax', 'generatetax')->name('generate-tax')->middleware(['auth']);
     Volt::route('/dashboard', 'dashboard')->name('dashboard')->middleware(['auth']);
     Volt::route('/dashboard/manager', 'dashboard-manager')->name('manager.dashboard')->middleware(['auth']);
-    Volt::route('/dashboard/tax-payer', 'dashboard-user')->name('user.dashboard')->middleware(['auth']);
 
     Volt::route('/add/earning', 'add-earning')->name('add.earning')->middleware(['auth']);
-    Volt::route('/assessment', 'assessment')->name('assessment')->middleware(['auth']);
+    Volt::route('/assessment', 'assessment')->name('assessment')->middleware(['auth:taxpayer']);
     Volt::route('/taxpayer/validation', 'taxpayer-validation')->name('taxpayer-validation')->middleware(['guest']);
+
+    // Volt::route('/taxpayer/dashboard', 'taxpayer.dashboard')
+    // ->middleware('auth:taxpayer')
+    // ->name('taxpayer.dashboard');
+        Volt::route('/assessments', 'getassessments')->name('get-assessment')->middleware(['auth']);
+
+    Volt::route('/view/assessment', 'view-assessments')->name('view-assessment')->middleware(['auth:taxpayer']);
+    Volt::route('/dashboard/tax-payer', 'dashboard-user')->name('user.dashboard')->middleware(['auth:taxpayer']);
 
 
     // Route::get('/taxpayer', function () {

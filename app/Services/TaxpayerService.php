@@ -13,7 +13,7 @@ class TaxpayerService{
     }
 
     public function getDetailByTaxpayerID($taxpayer_id){
-        return Taxpayer::where('taxpayer_id', $taxpayer_id)->with('user')->first();
+        return Taxpayer::where('taxpayer_id', $taxpayer_id)->with(['user','assets'])->first();
     }
 
     public function getTaxpayerDetailByUserID($user_id){
@@ -23,6 +23,10 @@ class TaxpayerService{
                 ->where('taxpayers.user_id', $user_id)
                 ->select('taxpayers.*', 'assets.*')
                 ->get();
+    }
+
+    public function getTaxpayerIdByUserId($user_id){
+        return Taxpayer::with('assets')->where('user_id', $user_id)->get();
     }
 
     public function getTaxpayerAssessmentByUserID($user_id){
